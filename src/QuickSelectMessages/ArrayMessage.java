@@ -1,4 +1,4 @@
-package QuickSelect;
+package QuickSelectMessages;
 
 import java.io.Serializable;
 
@@ -98,8 +98,7 @@ public class ArrayMessage implements IMessage, Serializable
 
 	public int chooseNewPivot()
 	{
-		// Just return the first element in that subsection of the array
-		return this.array[lo];
+		return this.array[(hi - lo) / 2];
 	}
 
 	private static void swap(int first, int second, int[] array)

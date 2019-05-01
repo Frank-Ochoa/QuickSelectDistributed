@@ -1,4 +1,4 @@
-package QuickSelect;
+package QuickSelectMessages;
 
 import java.io.Serializable;
 

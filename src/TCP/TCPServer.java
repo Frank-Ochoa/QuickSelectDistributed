@@ -1,6 +1,6 @@
 package TCP;
 
-import QuickSelect.*;
+import QuickSelectMessages.*;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -102,9 +102,9 @@ class TCPServer
 			if (left == k)
 			{
 				System.out.println(arrayToSort[left + right]);
-				for (int i = 0; i < numClients; i++)
+				for(ObjectOutputStream stream : oStreams)
 				{
-					oStreams.get(i).writeObject(new EndMessage());
+					stream.writeObject(new EndMessage());
 				}
 				return;
 			}

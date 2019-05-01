@@ -1,6 +1,6 @@
 package TCP;
 
-import QuickSelect.*;
+import QuickSelectMessages.*;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
