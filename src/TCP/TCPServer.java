@@ -87,21 +87,21 @@ class TCPServer
 
 		while (true)
 		{
-			//int[] serverResult = serverWork.getResults(1, 5);
 			int left = 0;
-			//int right = 0;
+			int right = 0;
 
 			// Wait to here back from the clients, and collect their results
 			for (int i = 0; i < numClients; i++)
 			{
 				int[] clientResult = (int[]) iStreams.get(i).readObject();
 				left += clientResult[0];
-				//right += clientResult[1];
+				right += clientResult[1];
 			}
 
 			// Run the select
 			if (left == k)
 			{
+				System.out.println(arrayToSort[left + right]);
 				for (int i = 0; i < numClients; i++)
 				{
 					oStreams.get(i).writeObject(new EndMessage());
