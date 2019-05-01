@@ -76,12 +76,13 @@ class TCPServer
 			if (i == numClients)
 			{
 				oStreams.get(i - 1).writeObject(
-						new ArrayMessage(Arrays.copyOfRange(arrayToSort, (i - 1) * chunkSize, arrayToSort.length - 1),
+						new ArrayMessage(Arrays.copyOfRange(arrayToSort, (i - 1) * chunkSize, arrayToSort.length),
 								pivotValue));
+				break;
 			}
 
 			oStreams.get(i - 1).writeObject(
-					new ArrayMessage(Arrays.copyOfRange(arrayToSort, (i - 1) * chunkSize, (i * chunkSize) - 1),
+					new ArrayMessage(Arrays.copyOfRange(arrayToSort, (i - 1) * chunkSize, (i * chunkSize)),
 							pivotValue));
 		}
 
@@ -101,7 +102,7 @@ class TCPServer
 			// Run the select
 			if (left == k)
 			{
-				System.out.println(arrayToSort[left + right]);
+				System.out.println(arrayToSort[left + right - 1]);
 				for(ObjectOutputStream stream : oStreams)
 				{
 					stream.writeObject(new EndMessage());

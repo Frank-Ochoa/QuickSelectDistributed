@@ -1,6 +1,7 @@
 package QuickSelectMessages;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class ArrayMessage implements IMessage, Serializable
 {
@@ -16,7 +17,9 @@ public class ArrayMessage implements IMessage, Serializable
 	private int pivotValue;
 	private int lo;
 	private int hi;
+	private int arrayLength;
 	private int pivotLocation;
+
 
 	public ArrayMessage(int[] array, int pivotValue)
 	{
@@ -24,6 +27,8 @@ public class ArrayMessage implements IMessage, Serializable
 		this.pivotValue = pivotValue;
 		this.lo = 0;
 		this.hi = array.length - 1;
+		this.arrayLength = array.length;
+
 	}
 
 
@@ -46,17 +51,20 @@ public class ArrayMessage implements IMessage, Serializable
 		// index at the far end to shift any instance of the partition value to
 		// the end, and only partitions up to the partitions.
 
+		System.out.println("LO: " + left + " :: HI: " + right + " :: PIVOT VALUE: " + pivotValue);
+		System.out.println("ARRAY BEFORE PART: " + Arrays.toString(array));
+
 		int storeIndex = left;
+		int thingsLeft = 0;
 		int pivotStoreIndex = right;
 		int pivotInst = 0;
 
-		System.out.println("pivot: " + pivotValue);
 		for (int i = left; i <= pivotStoreIndex; i++)
 		{
-
 			if (array[i] < pivotValue)
 			{
 				swap(i, storeIndex, array);
+				thingsLeft++;
 				storeIndex++;
 			}
 			else if (array[i] == pivotValue)
@@ -69,20 +77,31 @@ public class ArrayMessage implements IMessage, Serializable
 
 		}
 
-		this.pivotLocation = storeIndex + 1;
+
+		System.out.println("ARRAY AFTER PART: " + Arrays.toString(array));
+		System.out.println("THINGS LEFT: " + thingsLeft);
+
+
+		this.pivotLocation = thingsLeft + 1;
+
 		// Return the left and the right
-		return new int[] { storeIndex, array.length - storeIndex - pivotInst };
+		return new int[] { thingsLeft, arrayLength - thingsLeft - pivotInst};
 	}
 
 	public void keepHalf(int half)
 	{
+
 		if(half == 0)
 		{
+			System.out.println("KEPT LEFT");
 			hi = pivotLocation;
+			System.out.println("NEW HI " + hi);
 		}
 		else
 		{
+			System.out.println("KEPT RIGHT");
 			lo = pivotLocation;
+			System.out.println("NEW LO " + lo);
 		}
 	}
 
@@ -98,10 +117,10 @@ public class ArrayMessage implements IMessage, Serializable
 
 	public int chooseNewPivot()
 	{
-		return this.array[(hi - lo) / 2];
+		return this.array[lo];
 	}
 
-	private static void swap(int first, int second, int[] array)
+	private void swap(int first, int second, int[] array)
 	{
 		int temp = array[first];
 		array[first] = array[second];
