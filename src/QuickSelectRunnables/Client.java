@@ -21,7 +21,7 @@ import java.util.concurrent.BlockingQueue;
 		try
 		{
 			// First thing each Client will take is an ArrayMessage
-			ArrayMessage clientWork = (ArrayMessage) input.take();
+			ArrayMessageTest clientWork = (ArrayMessageTest) input.take();
 			output.put(clientWork.getResults());
 
 			while (true)
@@ -52,6 +52,7 @@ import java.util.concurrent.BlockingQueue;
 					{
 						output.put(new NoPivotMessage());
 					}
+
 				}
 
 				if (message instanceof SendPivotMessage)

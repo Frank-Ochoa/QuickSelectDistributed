@@ -22,12 +22,12 @@ public class QuickSelectParallel
 
 	public static void main(String[] args)
 	{
-		int numClients = 4;
+		int numClients = 2;
 		int[] arrayToSort = {3, 8, 9, 1, 22, 6, 100};
 		int k = 2;
 
 		// Server Thread takes from Q1 and puts on respective client Queues
-		BlockingQueue<Object> Q1 = new ArrayBlockingQueue<>(1);
+		//BlockingQueue<Object> Q1 = new ArrayBlockingQueue<>(1);
 
 		// Add as many Queues as there are clients
 		List<BlockingQueue<IMessage>> outPutQueues = new ArrayList<>(numClients);

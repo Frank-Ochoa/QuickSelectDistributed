@@ -12,6 +12,7 @@ import java.util.concurrent.BlockingQueue;
 	private int[] arrayToSort;
 	private int numClients;
 	private int k;
+	private int pivotValue;
 
 	public Server(List<BlockingQueue<Object>> input, List<BlockingQueue<IMessage>> output, int[] arrayToSort, int numClients,
 			int k)
@@ -21,6 +22,7 @@ import java.util.concurrent.BlockingQueue;
 		this.arrayToSort = arrayToSort;
 		this.numClients = numClients;
 		this.k = k;
+		this.pivotValue = arrayToSort[arrayToSort.length / 2];
 	}
 
 	private void sendOutHalfs(List<BlockingQueue<IMessage>> queues, int half)
@@ -50,6 +52,7 @@ import java.util.concurrent.BlockingQueue;
 
 				if (message instanceof SendPivotMessage)
 				{
+					pivotValue = ((SendPivotMessage) message).getPivot();
 					// Redistribute out the pivot to each client
 					for (BlockingQueue<IMessage> queue : queues)
 					{
@@ -71,7 +74,6 @@ import java.util.concurrent.BlockingQueue;
 	@Override public void run()
 	{
 		final int chunkSize = arrayToSort.length / numClients;
-		final int pivotValue = arrayToSort[arrayToSort.length / 2];
 		int left;
 		int right;
 
@@ -85,7 +87,7 @@ import java.util.concurrent.BlockingQueue;
 				{
 					System.out.println(
 							Arrays.toString(Arrays.copyOfRange(arrayToSort, (i - 1) * chunkSize, arrayToSort.length)));
-					output.get(i - 1).put(new ArrayMessage(
+					output.get(i - 1).put(new ArrayMessageTest(
 							Arrays.copyOfRange(arrayToSort, (i - 1) * chunkSize, arrayToSort.length), pivotValue));
 					break;
 				}
@@ -93,7 +95,7 @@ import java.util.concurrent.BlockingQueue;
 				System.out.println(
 						Arrays.toString(Arrays.copyOfRange(arrayToSort, (i - 1) * chunkSize, (i * chunkSize))));
 				output.get(i - 1)
-						.put(new ArrayMessage(Arrays.copyOfRange(arrayToSort, (i - 1) * chunkSize, (i * chunkSize)),
+						.put(new ArrayMessageTest(Arrays.copyOfRange(arrayToSort, (i - 1) * chunkSize, (i * chunkSize)),
 								pivotValue));
 			}
 
@@ -111,9 +113,9 @@ import java.util.concurrent.BlockingQueue;
 				}
 
 				// Run the select
-				if (left == k)
+				if (left == k - 1)
 				{
-					System.out.println(arrayToSort[left + right - 1]);
+					System.out.println(pivotValue);
 					for (BlockingQueue<IMessage> queue : output)
 					{
 						queue.put(new EndMessage());

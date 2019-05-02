@@ -1,7 +1,9 @@
 package QuickSelectMessages;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class ArrayMessage implements IMessage, Serializable
 {
@@ -17,7 +19,6 @@ public class ArrayMessage implements IMessage, Serializable
 	private int pivotValue;
 	private int lo;
 	private int hi;
-	private int arrayLength;
 	private int pivotLocation;
 
 
@@ -27,8 +28,6 @@ public class ArrayMessage implements IMessage, Serializable
 		this.pivotValue = pivotValue;
 		this.lo = 0;
 		this.hi = array.length - 1;
-		this.arrayLength = array.length;
-
 	}
 
 
@@ -50,6 +49,22 @@ public class ArrayMessage implements IMessage, Serializable
 		// for possibility of multiple of the partition. Uses a partition store
 		// index at the far end to shift any instance of the partition value to
 		// the end, and only partitions up to the partitions.
+
+		if(array.length == 1)
+		{
+			if (array[0] > 0)
+			{
+				return new int[] {0 , 1};
+			}
+			else if (array[0] < 0)
+			{
+				return new int[] {1, 0};
+			}
+			else
+			{
+				return new int[] {0, 0};
+			}
+		}
 
 		System.out.println("LO: " + left + " :: HI: " + right + " :: PIVOT VALUE: " + pivotValue);
 		System.out.println("ARRAY BEFORE PART: " + Arrays.toString(array));
@@ -81,15 +96,16 @@ public class ArrayMessage implements IMessage, Serializable
 		System.out.println("ARRAY AFTER PART: " + Arrays.toString(array));
 		System.out.println("THINGS LEFT: " + thingsLeft);
 
-
 		this.pivotLocation = thingsLeft + 1;
 
 		// Return the left and the right
-		return new int[] { thingsLeft, arrayLength - thingsLeft - pivotInst};
+		return new int[] { thingsLeft, array.length - thingsLeft - pivotInst};
 	}
 
 	public void keepHalf(int half)
 	{
+
+		// BUG PROBABLY HERE
 
 		if(half == 0)
 		{
