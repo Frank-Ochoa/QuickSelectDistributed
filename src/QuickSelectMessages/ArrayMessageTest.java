@@ -102,7 +102,7 @@ public class ArrayMessageTest implements IMessage, Serializable
 		//System.exit(0);
 
 
-		return new int[] {thingsLeft, array.length - thingsLeft};
+		return new int[] {thingsLeft};
 	}
 
 	public void keepHalf(int half)

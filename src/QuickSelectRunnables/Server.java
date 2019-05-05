@@ -7,14 +7,14 @@ import java.util.concurrent.BlockingQueue;
 
 @SuppressWarnings("Duplicates") public class Server implements Runnable
 {
-	private List<BlockingQueue<Object>> input;
+	private BlockingQueue input;
 	private List<BlockingQueue<IMessage>> output;
 	private int[] arrayToSort;
 	private int numClients;
 	private int k;
 	private int pivotValue;
 
-	public Server(List<BlockingQueue<Object>> input, List<BlockingQueue<IMessage>> output, int[] arrayToSort, int numClients,
+	public Server(BlockingQueue input, List<BlockingQueue<IMessage>> output, int[] arrayToSort, int numClients,
 			int k)
 	{
 		this.input = input;
@@ -39,7 +39,7 @@ import java.util.concurrent.BlockingQueue;
 		}
 	}
 
-	private void chooseNewAndRepart(List<BlockingQueue<IMessage>> queues, List<BlockingQueue<Object>> input, int numClients)
+	private void chooseNewAndRepart(List<BlockingQueue<IMessage>> queues, BlockingQueue<Object> input, int numClients)
 	{
 		try
 		{
@@ -47,7 +47,7 @@ import java.util.concurrent.BlockingQueue;
 			for (int i = 0; i < numClients; i++)
 			{
 				queues.get(i).put(new ChoosePivotMessage());
-				IMessage message = (IMessage) input.get(i).take();
+				IMessage message = (IMessage) input.take();
 
 
 				if (message instanceof SendPivotMessage)
@@ -75,7 +75,6 @@ import java.util.concurrent.BlockingQueue;
 	{
 		final int chunkSize = arrayToSort.length / numClients;
 		int left;
-		int pivotInstance;
 
 		try
 		{
@@ -106,7 +105,7 @@ import java.util.concurrent.BlockingQueue;
 				// Wait to here back from the clients, and collect their results
 				for (int i = 0; i < numClients; i++)
 				{
-					int[] clientResult = (int[]) input.get(i).take();
+					int[] clientResult = (int[]) input.take();
 					left += clientResult[0];
 				}
 
