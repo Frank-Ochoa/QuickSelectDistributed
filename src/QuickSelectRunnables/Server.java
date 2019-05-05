@@ -75,7 +75,7 @@ import java.util.concurrent.BlockingQueue;
 	{
 		final int chunkSize = arrayToSort.length / numClients;
 		int left;
-		int right;
+		int pivotInstance;
 
 		try
 		{
@@ -102,18 +102,16 @@ import java.util.concurrent.BlockingQueue;
 			while (true)
 			{
 				left = 0;
-				right = 0;
 
 				// Wait to here back from the clients, and collect their results
 				for (int i = 0; i < numClients; i++)
 				{
 					int[] clientResult = (int[]) input.get(i).take();
 					left += clientResult[0];
-					right += clientResult[1];
 				}
 
 				// Run the select
-				if (left == k - 1)
+				if (left == k)
 				{
 					System.out.println(pivotValue);
 					for (BlockingQueue<IMessage> queue : output)
@@ -132,6 +130,8 @@ import java.util.concurrent.BlockingQueue;
 				}
 				else
 				{
+					this.k -= left + 1;
+					System.out.println("WENT RIGHT, CHANGED K TO VALUE : " + k);
 					// Send Keep right half out the clients
 					sendOutHalfs(output, 1);
 

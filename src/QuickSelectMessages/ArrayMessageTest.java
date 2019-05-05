@@ -2,24 +2,25 @@ package QuickSelectMessages;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.stream.IntStream;
 
 public class ArrayMessageTest implements IMessage, Serializable
 {
 	// Required for serizlizability
 	public static long serialVersionUID = 1L;
-
-	public ArrayMessageTest()
-	{
-		super();
-	}
-
 	private int[] array;
 	private int pivotValue;
 	private int lo;
 	private int hi;
 	private int pivotLocation;
 	private int thingsLeft;
+	private int thingsRight;
+
+
+
+	public ArrayMessageTest()
+	{
+		super();
+	}
 
 	public ArrayMessageTest(int[] array, int pivotValue)
 	{
@@ -30,10 +31,9 @@ public class ArrayMessageTest implements IMessage, Serializable
 		this.pivotLocation = 0;
 	}
 
-
 	public int[] getResults()
 	{
-		return partition(lo, hi, pivotValue);
+		return partition(lo, hi);
 	}
 
 	public void setPivotValue(int pivotValue)
@@ -41,11 +41,8 @@ public class ArrayMessageTest implements IMessage, Serializable
 		this.pivotValue = pivotValue;
 	}
 
-
-	@SuppressWarnings("Duplicates") public int[] partition(int left, int right, int pivotValue)
+	@SuppressWarnings("Duplicates") public int[] partition(int lo, int hi)
 	{
-
-
 		// Scan the array looking for pivot
 		boolean pivotFound = false;
 		for (int i = 0; i < array.length; i++)
@@ -66,19 +63,19 @@ public class ArrayMessageTest implements IMessage, Serializable
 			System.arraycopy(array, 0, newArray, 1, newArray.length - 1);
 			array = newArray;
 			pivotLocation = 0;
+			hi++;
 		}
 
-
-		System.err.println("LO: " + left + " :: HI: " + right + " :: PIVOT VALUE: " + pivotValue);
+		System.err.println("LO: " + lo + " :: HI: " + (hi) + " :: PIVOT VALUE: " + pivotValue);
 		System.err.println("ARRAY BEFORE PART: " + Arrays.toString(array));
 
 		// Same logic as sequential
-		swap(pivotLocation, right - 1, array);
+		swap(pivotLocation, hi, array);
 
-		int storeIndex = left;
+		int storeIndex = lo;
 		int thingsLeft = 0;
 
-		for (int i = left; i < right; i++)
+		for (int i = lo; i < hi; i++)
 		{
 			if (array[i] < pivotValue)
 			{
@@ -86,42 +83,47 @@ public class ArrayMessageTest implements IMessage, Serializable
 				storeIndex++;
 				thingsLeft++;
 			}
-
 		}
 
 		// Pivot to final place
-		swap(storeIndex, right - 1, array);
+		swap(storeIndex, hi, array);
 
-		pivotLocation = storeIndex;
+		this.pivotLocation = storeIndex;
 
-		// Remove it
-		if (!pivotFound)
-		{
-			array = IntStream.range(0, array.length).filter(i -> i != pivotLocation).map(i -> array[i]).toArray();
-		}
-
-		System.out.println("PIVOT INDEX " + pivotLocation);
 		System.err.println("ARRAY AFTER PART: " + Arrays.toString(array));
 		System.err.println("THINGS LEFT: " + (thingsLeft));
+		System.err.println("THINGS RIGHT: " + (array.length - thingsLeft - 1));
 
 
-		return new int[] {pivotLocation, array.length - thingsLeft};
+		this.thingsLeft = thingsLeft;
+		// -1 for instance of pivot
+		this.thingsRight = array.length - thingsLeft - 1;
+
+		//System.exit(0);
+
+
+		return new int[] {thingsLeft, array.length - thingsLeft};
 	}
 
 	public void keepHalf(int half)
 	{
-
-		if(half == 0)
+		if (half == 0)
 		{
-			System.out.println("KEEP LEFT");
-			hi = pivotLocation;
-			System.out.println("NEW HI " + hi);
+			// Go left, want array of size of thingsLeft, copy from 0 to pivotLocation - 1
+			int[] newArray = new int[thingsLeft];
+			System.arraycopy(array, 0, newArray, 0, pivotLocation);
+			array = newArray;
+			this.lo = 0;
+			this.hi = array.length - 1;
 		}
 		else
 		{
-			System.out.println("KEEP RIGHT");
-			lo = pivotLocation;
-			System.out.println("NEW LO " + lo);
+			// Go right, want array of size of thingsRight, copy from pivotLocation + 1, to array.length - 1
+			int[] newArray = new int[thingsRight];
+			System.arraycopy(array, pivotLocation + 1, newArray, 0, thingsRight);
+			array = newArray;
+			this.lo = 0;
+			this.hi = array.length - 1;
 		}
 	}
 
