@@ -44,6 +44,7 @@ public class ArrayMessageTest implements IMessage, Serializable
 	@SuppressWarnings("Duplicates") public int[] partition(int lo, int hi)
 	{
 		// Scan the array looking for pivot
+		// TODO: REPLACE THIS SCAN
 		boolean pivotFound = false;
 		for (int i = 0; i < array.length; i++)
 		{
@@ -107,6 +108,8 @@ public class ArrayMessageTest implements IMessage, Serializable
 
 	public void keepHalf(int half)
 	{
+		//TODO : STOP COPYING ARRAYS HERE, JUST USE LO AND HI
+
 		if (half == 0)
 		{
 			// Go left, want array of size of thingsLeft, copy from 0 to pivotLocation - 1
