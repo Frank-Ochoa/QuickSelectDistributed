@@ -22,7 +22,7 @@ public class QuickSelectParallel
 
 	public static void main(String[] args)
 	{
-		int numClients = 6;
+		int numClients = 3;
 		int[] arrayToSort = {3, 8, 9, 1, 22, 6, 100};
 		int k = 2;
 
