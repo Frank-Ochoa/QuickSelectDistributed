@@ -13,6 +13,8 @@ import java.util.List;
 
 class TCPServer
 {
+	private static int pivotValue;
+
 	public static void sendOutHalfs(List<ObjectOutputStream> oStreams, int half) throws IOException
 	{
 		for (ObjectOutputStream stream : oStreams)
@@ -31,6 +33,8 @@ class TCPServer
 
 			if (message instanceof SendPivotMessage)
 			{
+				pivotValue = ((SendPivotMessage) message).getPivot();
+
 				// Redistribute out the pivot to each client
 				for (ObjectOutputStream stream : oStreams)
 				{
@@ -50,10 +54,10 @@ class TCPServer
 
 		ServerSocket welcomeSocket = new ServerSocket(6789);
 		int[] arrayToSort = { 3, 8, 9, 1, 22, 6, 100 };
-		final int numClients = 1;
+		final int numClients = 2;
 		//final int numComputers = numClients + 1;
 		final int chunkSize = arrayToSort.length / numClients;
-		final int pivotValue = arrayToSort[arrayToSort.length / 2];
+		pivotValue = arrayToSort[arrayToSort.length / 2];
 		int k = 2;
 
 		List<Socket> connectionSockets = new ArrayList<>();
@@ -89,20 +93,18 @@ class TCPServer
 		while (true)
 		{
 			int left = 0;
-			int right = 0;
 
 			// Wait to here back from the clients, and collect their results
 			for (int i = 0; i < numClients; i++)
 			{
 				int[] clientResult = (int[]) iStreams.get(i).readObject();
 				left += clientResult[0];
-				right += clientResult[1];
 			}
 
 			// Run the select
 			if (left == k)
 			{
-				System.out.println(arrayToSort[left + right - 1]);
+				System.out.println(arrayToSort[pivotValue]);
 				for(ObjectOutputStream stream : oStreams)
 				{
 					stream.writeObject(new EndMessage());
@@ -119,6 +121,7 @@ class TCPServer
 			}
 			else
 			{
+				k -= left + 1;
 				// Send Keep right half out the clients
 				sendOutHalfs(oStreams, 1);
 
