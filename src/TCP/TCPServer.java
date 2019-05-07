@@ -54,7 +54,7 @@ class TCPServer
 
 		ServerSocket welcomeSocket = new ServerSocket(6789);
 		int[] arrayToSort = { 3, 8, 9, 1, 22, 6, 100 };
-		final int numClients = 2;
+		final int numClients = 1;
 		//final int numComputers = numClients + 1;
 		final int chunkSize = arrayToSort.length / numClients;
 		pivotValue = arrayToSort[arrayToSort.length / 2];
@@ -104,7 +104,7 @@ class TCPServer
 			// Run the select
 			if (left == k)
 			{
-				System.out.println(arrayToSort[pivotValue]);
+				System.out.println(pivotValue);
 				for(ObjectOutputStream stream : oStreams)
 				{
 					stream.writeObject(new EndMessage());

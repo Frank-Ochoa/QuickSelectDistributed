@@ -20,7 +20,7 @@ class TCPClient
 		ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
 
 
-		ArrayMessage clientWork = (ArrayMessage) inputStream.readObject();
+		ArrayMessageTest clientWork = (ArrayMessageTest) inputStream.readObject();
 
 		outputStream.writeObject(clientWork.getResults());
 
