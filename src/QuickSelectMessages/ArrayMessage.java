@@ -1,26 +1,26 @@
 package QuickSelectMessages;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class ArrayMessage implements IMessage, Serializable
 {
 	// Required for serizlizability
 	public static long serialVersionUID = 1L;
-
-	public ArrayMessage()
-	{
-		super();
-	}
-
 	private int[] array;
 	private int pivotValue;
 	private int lo;
 	private int hi;
 	private int pivotLocation;
+	private int thingsLeft;
+	private int thingsRight;
 
+
+
+	public ArrayMessage()
+	{
+		super();
+	}
 
 	public ArrayMessage(int[] array, int pivotValue)
 	{
@@ -28,12 +28,12 @@ public class ArrayMessage implements IMessage, Serializable
 		this.pivotValue = pivotValue;
 		this.lo = 0;
 		this.hi = array.length - 1;
+		this.pivotLocation = 0;
 	}
-
 
 	public int[] getResults()
 	{
-		return partitionNoPI(lo, hi, pivotValue);
+		return partition(lo, hi);
 	}
 
 	public void setPivotValue(int pivotValue)
@@ -41,83 +41,92 @@ public class ArrayMessage implements IMessage, Serializable
 		this.pivotValue = pivotValue;
 	}
 
-
-	@SuppressWarnings("Duplicates") public int[] partitionNoPI(int left, int right, int pivotValue)
+	@SuppressWarnings("Duplicates") public int[] partition(int lo, int hi)
 	{
-		// Works similarly to the previous partition method, but does not use
-		// pivot index (in case of no pivot value in array) and also accounts
-		// for possibility of multiple of the partition. Uses a partition store
-		// index at the far end to shift any instance of the partition value to
-		// the end, and only partitions up to the partitions.
-
-		if(array.length == 1)
+		// Scan the array looking for pivot
+		// TODO: REPLACE THIS SCAN
+		boolean pivotFound = false;
+		for (int i = 0; i < array.length; i++)
 		{
-			if (array[0] > 0)
+			if (array[i] == pivotValue)
 			{
-				return new int[] {0 , 1};
-			}
-			else if (array[0] < 0)
-			{
-				return new int[] {1, 0};
-			}
-			else
-			{
-				return new int[] {0, 0};
+				pivotFound = true;
+				pivotLocation = i;
+				break;
 			}
 		}
 
-		System.out.println("LO: " + left + " :: HI: " + right + " :: PIVOT VALUE: " + pivotValue);
-		System.out.println("ARRAY BEFORE PART: " + Arrays.toString(array));
+		// If no pivot was found, add it in :(
+		if (!pivotFound)
+		{
+			int[] newArray = new int[array.length + 1];
+			newArray[0] = pivotValue;
+			System.arraycopy(array, 0, newArray, 1, newArray.length - 1);
+			array = newArray;
+			pivotLocation = 0;
+			hi++;
+		}
 
-		int storeIndex = left;
+		System.err.println("LO: " + lo + " :: HI: " + (hi) + " :: PIVOT VALUE: " + pivotValue);
+		System.err.println("ARRAY BEFORE PART: " + Arrays.toString(array));
+
+		// Same logic as sequential
+		swap(pivotLocation, hi, array);
+
+		int storeIndex = lo;
 		int thingsLeft = 0;
-		int pivotStoreIndex = right;
-		int pivotInst = 0;
 
-		for (int i = left; i <= pivotStoreIndex; i++)
+		for (int i = lo; i < hi; i++)
 		{
 			if (array[i] < pivotValue)
 			{
-				swap(i, storeIndex, array);
-				thingsLeft++;
+				swap(storeIndex, i, array);
 				storeIndex++;
+				thingsLeft++;
 			}
-			else if (array[i] == pivotValue)
-			{
-				swap(i, pivotStoreIndex, array);
-				pivotStoreIndex--;
-				pivotInst++;
-				i--;
-			}
-
 		}
 
+		// Pivot to final place
+		swap(storeIndex, hi, array);
 
-		System.out.println("ARRAY AFTER PART: " + Arrays.toString(array));
-		System.out.println("THINGS LEFT: " + thingsLeft);
+		this.pivotLocation = storeIndex;
 
-		this.pivotLocation = thingsLeft + 1;
+		System.err.println("ARRAY AFTER PART: " + Arrays.toString(array));
+		System.err.println("THINGS LEFT: " + (thingsLeft));
+		System.err.println("THINGS RIGHT: " + (array.length - thingsLeft - 1));
 
-		// Return the left and the right
-		return new int[] { thingsLeft, array.length - thingsLeft - pivotInst};
+
+		this.thingsLeft = thingsLeft;
+		// -1 for instance of pivot
+		this.thingsRight = array.length - thingsLeft - 1;
+
+		//System.exit(0);
+
+
+		return new int[] {thingsLeft};
 	}
 
 	public void keepHalf(int half)
 	{
+		//TODO : STOP COPYING ARRAYS HERE, JUST USE LO AND HI
 
-		// BUG PROBABLY HERE
-
-		if(half == 0)
+		if (half == 0)
 		{
-			System.out.println("KEPT LEFT");
-			hi = pivotLocation;
-			System.out.println("NEW HI " + hi);
+			// Go left, want array of size of thingsLeft, copy from 0 to pivotLocation - 1
+			int[] newArray = new int[thingsLeft];
+			System.arraycopy(array, 0, newArray, 0, pivotLocation);
+			array = newArray;
+			this.lo = 0;
+			this.hi = array.length - 1;
 		}
 		else
 		{
-			System.out.println("KEPT RIGHT");
-			lo = pivotLocation;
-			System.out.println("NEW LO " + lo);
+			// Go right, want array of size of thingsRight, copy from pivotLocation + 1, to array.length - 1
+			int[] newArray = new int[thingsRight];
+			System.arraycopy(array, pivotLocation + 1, newArray, 0, thingsRight);
+			array = newArray;
+			this.lo = 0;
+			this.hi = array.length - 1;
 		}
 	}
 

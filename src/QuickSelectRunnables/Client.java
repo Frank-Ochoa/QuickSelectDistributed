@@ -21,7 +21,7 @@ import java.util.concurrent.BlockingQueue;
 		try
 		{
 			// First thing each Client will take is an ArrayMessage
-			ArrayMessageTest clientWork = (ArrayMessageTest) input.take();
+			ArrayMessage clientWork = (ArrayMessage) input.take();
 			output.put(clientWork.getResults());
 
 			while (true)

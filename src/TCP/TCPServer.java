@@ -80,13 +80,13 @@ class TCPServer
 			if (i == numClients)
 			{
 				oStreams.get(i - 1).writeObject(
-						new ArrayMessageTest(Arrays.copyOfRange(arrayToSort, (i - 1) * chunkSize, arrayToSort.length),
+						new ArrayMessage(Arrays.copyOfRange(arrayToSort, (i - 1) * chunkSize, arrayToSort.length),
 								pivotValue));
 				break;
 			}
 
 			oStreams.get(i - 1).writeObject(
-					new ArrayMessageTest(Arrays.copyOfRange(arrayToSort, (i - 1) * chunkSize, (i * chunkSize)),
+					new ArrayMessage(Arrays.copyOfRange(arrayToSort, (i - 1) * chunkSize, (i * chunkSize)),
 							pivotValue));
 		}
 

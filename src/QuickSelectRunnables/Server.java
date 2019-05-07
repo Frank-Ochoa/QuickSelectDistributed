@@ -86,7 +86,7 @@ import java.util.concurrent.BlockingQueue;
 				{
 					System.out.println(
 							Arrays.toString(Arrays.copyOfRange(arrayToSort, (i - 1) * chunkSize, arrayToSort.length)));
-					output.get(i - 1).put(new ArrayMessageTest(
+					output.get(i - 1).put(new ArrayMessage(
 							Arrays.copyOfRange(arrayToSort, (i - 1) * chunkSize, arrayToSort.length), pivotValue));
 					break;
 				}
@@ -94,7 +94,7 @@ import java.util.concurrent.BlockingQueue;
 				System.out.println(
 						Arrays.toString(Arrays.copyOfRange(arrayToSort, (i - 1) * chunkSize, (i * chunkSize))));
 				output.get(i - 1)
-						.put(new ArrayMessageTest(Arrays.copyOfRange(arrayToSort, (i - 1) * chunkSize, (i * chunkSize)),
+						.put(new ArrayMessage(Arrays.copyOfRange(arrayToSort, (i - 1) * chunkSize, (i * chunkSize)),
 								pivotValue));
 			}
 
